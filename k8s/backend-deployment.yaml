@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-backend
+  labels:
+    app: wiki
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wiki
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: wiki
+        tier: backend
+    spec:
+      containers:
+        - name: backend
+          image: wiki-backend:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+          volumeMounts:
+            - name: entries
+              mountPath: /app/entries
+            - name: db
+              mountPath: /app/db.sqlite3
+              subPath: db.sqlite3
+      volumes:
+        - name: entries
+          persistentVolumeClaim:
+            claimName: wiki-entries
+        - name: db
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: wiki
+    tier: backend
+  ports:
+    - port: 8000
+      targetPort: 8000
