@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: wikiit-backend
+    env: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: >
+      cd backend &&
+      python manage.py migrate &&
+      python manage.py import_entries &&
+      gunicorn wiki.wsgi:application --bind 0.0.0.0:$PORT --workers 3
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://abduljabbarr959-sys.github.io
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://abduljabbarr959-sys.github.io
