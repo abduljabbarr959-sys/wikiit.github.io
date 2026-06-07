@@ -92,6 +92,32 @@ minikube image load wiki-frontend:latest
 kubectl apply -f k8s/
 ```
 
+## Deployment
+
+### PythonAnywhere (free)
+
+1. Clone repo in a Bash console:
+   ```bash
+   git clone https://github.com/abduljabbarr959-sys/wikiit.github.io
+   cd wikiit.github.io
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r backend/requirements.txt
+   ```
+2. Go to **Web** tab → **Add a new web app** → **Manual config** → Python 3.10
+3. Set virtualenv to `~/wikiit.github.io/venv`
+4. Copy the WSGI file from [`docs/pythonanywhere-wsgi.py`](docs/pythonanywhere-wsgi.py) into the WSGI config field (update `DJANGO_SECRET_KEY` with a long random value)
+5. In Bash:
+   ```bash
+   cd ~/wikiit.github.io/backend
+   python manage.py migrate
+   python manage.py import_entries
+   python manage.py collectstatic
+   ```
+6. Click **Reload**
+
+Your API will be at `https://yourusername.pythonanywhere.com/api/entries/`
+
 ## API Endpoints
 
 | Method | Endpoint | Description |
